@@ -758,26 +758,25 @@ async function loadMastodonFollowers(user) {
 
 // Load Instagram Followers
 async function loadInstagramFollowers(user) {
-	// requesting data
-	// building request url
-  let url = "https://www.instagram.com/";
+  // requesting data
+  // building request url
+  let url = "https://i.instagram.com/api/v1/users/web_profile_info/?username=";
   url += encodeURI(user);
-  url += "/?__a=1&__d=dis";
   
   let request = new Request(url);
   request.headers = {
     "User-Agent":
-      "Mozilla/5.0 (iPhone; CPU iPhone OS 13_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1",
+      "Instagram 76.0.0.15.395 Android",
   };
   request.timeoutInterval = REQUEST_TIMEOUT;
 
-  let data = await request.loadJSON();
+  let response = await request.loadJSON();
   
   let followers = -1;
-  if (data.status == "fail") {
-    console.error("Instagram API: " + data.message);
+  if (response.status != "ok") {
+    console.error("Instagram API: " + response.message + " status: " + response.status);
   } else {
-    followers = data.graphql.user.edge_followed_by.count;
+    followers = response.data.user.edge_followed_by.count;
   }
 
   return followers;
